@@ -1,14 +1,21 @@
+// 用递归方法写一个算法，求二叉树的叶子结点数int leafnum(BTREE T)。
+// 要求：
+// 1、	定义二叉树的抽象数据类型和型BTREE，并定义基本操作。
+// 2、	编写函数leafnum(BTREE T)，返回树T的叶子节点的个数。
+// 在主函数中，构建一个二叉树，并验证所编写的算法。
+
+
 #include <iostream>
 using namespace std;
-
-typedef char ElemType;
-typedef struct BitNode
+typedef char datatype;
+struct node
 {
-  ElemType data;
-  struct BitNode *lchild, *rchild;
-} BitNode, *BitTree;
-
-void CreateBitTree(BitNode &BT, char *&str)
+  node *lchild;
+  datatype data;
+  node *rchild;
+};
+typedef node *BTREE;
+void CreateBTREE(BTREE &BT, char *&str) // 先根输入树
 {
   char ch;
   ch = *str++;
@@ -18,42 +25,39 @@ void CreateBitTree(BitNode &BT, char *&str)
   {
     BT = new node;
     BT->data = ch;
-    CreateBitTree(BT->lchild, str);
-    CreateBitTree(BT->rchild, str);
+    CreateBTREE(BT->lchild, str);
+    CreateBTREE(BT->rchild, str);
   }
 }
-
-void Empty(BitNode BT)
+void Empty(BTREE BT)
 {
   BT = NULL;
 }
-
-bool IsEmpty(BitTree BT)
+bool IsEmpty(BTREE BT) // 判断是否为空
 {
   if (BT == NULL)
     return true;
   else
     return false;
 }
-
-BitTree CreateBT(datatype v, BitTree ltree, BitTree rtree)
+BTREE CreateBT(datatype v, BTREE ltree, BTREE rtree) // 用左右子树建立二叉树
 {
-  BitTree root;
+  BTREE root;
   root = new node;
   root->data = v;
   root->lchild = ltree;
   root->rchild = rtree;
   return root;
 }
-BitTree Lchild(BitTree BT)
+BTREE Lchild(BTREE BT) // 返回左子树
 {
   return BT->lchild;
 }
-BitTree Rchild(BitTree BT)
+BTREE Rchild(BTREE BT) // 返回右子树 
 {
-  return BT->rchild;
+    return BT->rchild;
 }
-datatype Data(BitTree BT)
+datatype Data(BTREE BT) // 返回节点元素值
 {
   return BT->data;
 }
@@ -61,7 +65,7 @@ void visit(datatype dt)
 {
   cout << dt;
 }
-void PreOrder(BitTree BT)
+void PreOrder(BTREE BT) // 先根顺序遍历
 {
   if (!IsEmpty(BT))
   {
@@ -70,7 +74,7 @@ void PreOrder(BitTree BT)
     PreOrder(Rchild(BT));
   }
 }
-void InOrder(BitTree BT)
+void InOrder(BTREE BT) // 中根顺序遍历
 {
   if (!IsEmpty(BT))
   {
@@ -79,8 +83,7 @@ void InOrder(BitTree BT)
     PreOrder(Rchild(BT));
   }
 }
-
-void PostOrder(BitTree BT)
+void PostOrder(BTREE BT) // 后根顺序遍历
 {
   if (!IsEmpty(BT))
   {
@@ -89,7 +92,21 @@ void PostOrder(BitTree BT)
     visit(Data(BT));
   }
 }
-int leafnum(BitTree BT)
+int count2(BTREE BT)
+{
+  if (BT == NULL)
+    return 0;
+  else
+  {
+    if ((BT->lchild) && (BT->rchild))
+      return 1 + count2(Lchild(BT)) + count2(Rchild(BT));
+    if ((BT->lchild) && (BT->rchild == NULL))
+      return count2(Lchild(BT));
+    if ((BT->lchild == NULL) && (BT->rchild))
+      return count2(Rchild(BT));
+  }
+}
+int leafnum(BTREE BT)
 {
   static int count = 0;
   if (BT->lchild == NULL && BT->rchild == NULL)
@@ -100,11 +117,11 @@ int leafnum(BitTree BT)
     leafnum(Rchild(BT));
   }
 }
-
 int main()
 {
-  BitTree BT = NULL;
-  char *str = "ab##c###def##g##h#ij##k#l";
-  CreateBitTree(BT, str);
-  cout << "Leave Number is:" << leafnum(BT) << endl;
+  BTREE BT = NULL;
+  char *str = (char*)"abc##d##ef##g##";
+  CreateBTREE(BT, str);
+  cout << "度为 2 的节点的个数 :" << count2(BT) << endl;
+  cout << "叶子节点个数： " << leafnum(BT) << endl;
 }

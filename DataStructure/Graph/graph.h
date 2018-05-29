@@ -10,7 +10,7 @@ using namespace std;
 template <typename W>
 struct EdgeNode
 {
-    W                weight;  // 边所对应权值
+    W weight;  // 边所对应权值
     size_t startIndex;  // 边起点的索引
     size_t   endIndex;  // 边终点的索引
     EdgeNode<W>*   nextNode;  // 指向下个结点
